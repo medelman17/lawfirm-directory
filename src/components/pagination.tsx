@@ -5,6 +5,15 @@ import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationEllipsis,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
 interface PaginationControlsProps {
   page: number;
@@ -20,6 +29,33 @@ export function PaginationControls({ page, totalPages, baseUrl }: PaginationCont
     params.set("page", pageNumber.toString());
     return `${baseUrl}?${params.toString()}`;
   }
+
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
 
   return (
     <nav role="navigation" aria-label="pagination" className="mx-auto flex w-full justify-center">
