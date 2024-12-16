@@ -1,100 +1,61 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { LawFirm } from "@/types/law-firm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
 import { ExternalLink } from "lucide-react";
 import { PaginationControls } from "@/components/pagination";
+import { StatusToggle } from "@/components/status-toggle";
+import { formatDate } from "@/lib/utils";
 
 interface LawFirmsTableProps {
-  lawFirms: {
+  lawFirms: Promise<{
     items: LawFirm[];
     total: number;
     page: number;
     pageSize: number;
     totalPages: number;
-  };
+  }>;
   baseUrl: string;
+  currentPage: string;
 }
 
-function formatDate(date: Date | null): string {
-  if (!date) return "Never";
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export function LawFirmsTable({ lawFirms, baseUrl }: LawFirmsTableProps) {
-  const [firms, setFirms] = useState(lawFirms.items);
-
-  useEffect(() => {
-    setFirms(lawFirms.items);
-  }, [lawFirms.items]);
-
-  async function toggleStatus(firm: LawFirm) {
-    try {
-      const response = await fetch(`/api/lawfirms/${firm.id}/toggle`, {
-        method: "PATCH",
-      });
-
-      if (!response.ok) throw new Error("Failed to toggle status");
-
-      const updatedFirm = await response.json();
-      setFirms((prev) => prev.map((f) => (f.id === firm.id ? updatedFirm : f)));
-    } catch (error) {
-      console.error("Error toggling status:", error);
-    }
-  }
+export async function LawFirmsTable({ lawFirms, baseUrl, currentPage }: LawFirmsTableProps) {
+  const data = await lawFirms;
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <div className="flex flex-col flex-1">
+      <div className="rounded-lg border bg-card mb-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Website</TableHead>
+              <TableHead className="w-[300px]">Name</TableHead>
+              <TableHead className="w-[400px]">Website</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Last Scraped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {firms.map((firm) => (
+            {data.items.map((firm) => (
               <TableRow key={firm.id}>
-                <TableCell>
-                  <Link href={`/lawfirm/${firm.slug}`} className="font-medium hover:underline">
+                <TableCell className="truncate">
+                  <Link href={`/lawfirm/${firm.slug}`} className="font-medium hover:underline block truncate">
                     {firm.name}
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="truncate">
                   <a
                     href={firm.website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 hover:underline"
                   >
-                    {firm.website}
-                    <ExternalLink className="h-4 w-4" />
+                    <span className="truncate">{firm.website}</span>
+                    <ExternalLink className="h-4 w-4 flex-shrink-0" />
                   </a>
                 </TableCell>
                 <TableCell>
-                  <Toggle
-                    variant="outline"
-                    size="sm"
-                    pressed={firm.isActive}
-                    onPressedChange={() => toggleStatus(firm)}
-                    className="data-[state=on]:bg-green-50 data-[state=on]:text-green-700 data-[state=on]:border-green-600/20 dark:data-[state=on]:bg-green-500/10"
-                  >
-                    {firm.isActive ? "Active" : "Inactive"}
-                  </Toggle>
+                  <StatusToggle firm={firm} />
                 </TableCell>
                 <TableCell>{formatDate(firm.updatedAt)}</TableCell>
                 <TableCell className="text-right">
@@ -107,8 +68,9 @@ export function LawFirmsTable({ lawFirms, baseUrl }: LawFirmsTableProps) {
           </TableBody>
         </Table>
       </div>
-
-      <PaginationControls page={lawFirms.page} totalPages={lawFirms.totalPages} baseUrl={baseUrl} />
+      <div className="py-4">
+        <PaginationControls page={data.page} totalPages={data.totalPages} baseUrl={baseUrl} />
+      </div>
     </div>
   );
 }

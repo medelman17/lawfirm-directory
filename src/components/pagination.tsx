@@ -34,24 +34,48 @@ export function PaginationControls({ page, totalPages, baseUrl }: PaginationCont
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious
+            href={getPageUrl(page - 1)}
+            aria-disabled={page <= 1}
+            className={cn(page <= 1 && "pointer-events-none opacity-50")}
+          />
         </PaginationItem>
+
+        {[...Array(totalPages)].map((_, i) => {
+          const pageNumber = i + 1;
+          const isCurrentPage = pageNumber === page;
+          const isWithinRange = pageNumber === 1 || pageNumber === totalPages || Math.abs(pageNumber - page) <= 1;
+
+          if (!isWithinRange) {
+            if (pageNumber === 2 || pageNumber === totalPages - 1) {
+              return (
+                <PaginationItem key={pageNumber}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            }
+            return null;
+          }
+
+          return (
+            <PaginationItem key={pageNumber}>
+              <PaginationLink
+                href={getPageUrl(pageNumber)}
+                isActive={isCurrentPage}
+                aria-current={isCurrentPage ? "page" : undefined}
+              >
+                {pageNumber}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        })}
+
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext
+            href={getPageUrl(page + 1)}
+            aria-disabled={page >= totalPages}
+            className={cn(page >= totalPages && "pointer-events-none opacity-50")}
+          />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
