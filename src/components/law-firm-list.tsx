@@ -138,12 +138,12 @@ export function LawFirmList({ initialLawFirms }: LawFirmListProps) {
             </div>
             <div className="flex gap-2">
               <Button
-                variant={firm.active ? "outline" : "default"}
+                variant={firm.isActive ? "outline" : "default"}
                 size="sm"
-                onClick={() => handleUpdate(firm.id, { active: !firm.active })}
+                onClick={() => handleUpdate(firm.id, { isActive: !firm.isActive })}
                 disabled={isLoading}
               >
-                {firm.active ? "Deactivate" : "Activate"}
+                {firm.isActive ? "Deactivate" : "Activate"}
               </Button>
             </div>
           </div>

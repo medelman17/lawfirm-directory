@@ -1,53 +1,42 @@
-import { Metadata } from "next";
 import { Suspense } from "react";
-import { prisma } from "@/lib/prisma";
-import { LawFirmList } from "@/components/law-firm-list";
+import { LawFirmsTable } from "@/components/law-firms-table";
+import { LawFirmForm } from "@/components/law-firm-form";
+import { getLawFirms } from "@/lib/services/law-firm";
+import { handleFormSubmit } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "default-cache";
 
-export const metadata: Metadata = {
-  title: "Law Firm Directory",
-  description: "Manage and track law firm websites for scraping.",
-};
-
-async function LawFirmData() {
-  try {
-    const lawFirms = await prisma.lawFirm.findMany({
-      orderBy: { name: "asc" },
-    });
-    return <LawFirmList initialLawFirms={lawFirms} />;
-  } catch (error) {
-    console.error("Failed to fetch law firms:", error);
-    return (
-      <div className="p-4 border border-red-500 rounded-lg bg-red-50">
-        <h3 className="text-red-700 font-medium">Error</h3>
-        <p className="text-red-600">Failed to load law firms. Please try again later.</p>
-      </div>
-    );
-  }
+interface HomePageProps {
+  searchParams: Promise<{
+    page?: string;
+    per_page?: string;
+  }>;
 }
 
-export default function HomePage() {
+export default async function Home({ searchParams }: HomePageProps) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const pageSize = Number(params.per_page) || 10;
+  const lawFirms = await getLawFirms(page, pageSize);
+
   return (
-    <main className="container py-6">
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Law Firm Directory</h1>
-          <p className="text-muted-foreground">Manage and track law firm websites for scraping.</p>
-        </div>
-        <Suspense
-          fallback={
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-muted rounded w-1/4" />
-              <div className="h-32 bg-muted rounded" />
-              <div className="h-32 bg-muted rounded" />
-            </div>
-          }
-        >
-          <LawFirmData />
+    <div className="container py-10 space-y-8">
+      <div className="flex flex-col gap-4">
+        <h1 className="text-3xl font-bold tracking-tight">Law Firms</h1>
+        <p className="text-muted-foreground">A list of law firms and their websites for scraping.</p>
+      </div>
+
+      <div className="rounded-lg border bg-card">
+        <Suspense fallback={<div>Loading...</div>}>
+          <LawFirmsTable lawFirms={lawFirms} baseUrl="/" />
         </Suspense>
       </div>
-    </main>
+
+      <div className="rounded-lg border bg-card p-6">
+        <h2 className="text-lg font-semibold mb-4">Add New Law Firm</h2>
+        {/* <LawFirmForm onSubmit={handleFormSubmit} onCancel={() => {}} /> */}
+      </div>
+    </div>
   );
 }

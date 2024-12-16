@@ -48,10 +48,10 @@ export default async function LawFirmPage({ params }: { params: Promise<{ slug: 
             <div className="flex items-center gap-2">
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  lawFirm.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                  lawFirm.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                 }`}
               >
-                {lawFirm.active ? "Active" : "Inactive"}
+                {lawFirm.isActive ? "Active" : "Inactive"}
               </span>
             </div>
           </div>

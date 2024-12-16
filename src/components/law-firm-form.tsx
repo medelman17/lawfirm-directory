@@ -18,10 +18,10 @@ interface LawFirmFormProps {
 }
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  // const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save"}
+    <Button type="submit" disabled={false}>
+      {false ? "Saving..." : "Save"}
     </Button>
   );
 }

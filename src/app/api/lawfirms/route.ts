@@ -58,7 +58,7 @@ export async function POST(request: Request): Promise<ApiResponse<LawFirm>> {
         name: data.name,
         slug,
         website: data.website,
-        active: data.active,
+        isActive: data.active,
         metadata: data.metadata ? JSON.stringify(data.metadata) : "{}",
         lastScrapedAt: null,
         scrapeStatus: null,

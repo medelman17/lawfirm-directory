@@ -27,3 +27,13 @@ export interface LawFirmMetadata {
   yearEstablished: number;
   size: FirmSize;
 }
+
+export interface LawFirm {
+  id: string;
+  name: string;
+  slug: string;
+  website: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date | null;
+}

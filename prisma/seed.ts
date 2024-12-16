@@ -4,27 +4,27 @@ import { lawFirms } from "./data/law-firms";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Start seeding...");
+  console.log("Starting seed...");
 
-  // Clear existing data
-  await prisma.lawFirm.deleteMany();
-
-  // Create law firms in batches to avoid overwhelming the database
-  const batchSize = 50;
-  for (let i = 0; i < lawFirms.length; i += batchSize) {
-    const batch = lawFirms.slice(i, i + batchSize);
-    await Promise.all(
-      batch.map((firm) =>
-        prisma.lawFirm.create({
-          data: firm,
-        })
-      )
-    );
-    console.log(`Created law firms ${i + 1} to ${Math.min(i + batchSize, lawFirms.length)}`);
+  for (const firm of lawFirms) {
+    await prisma.lawFirm.upsert({
+      where: { slug: firm.slug },
+      update: {
+        isActive: firm.isActive,
+        metadata: firm.metadata,
+      },
+      create: {
+        name: firm.name,
+        slug: firm.slug,
+        website: firm.website,
+        isActive: firm.isActive,
+        metadata: firm.metadata,
+      },
+    });
   }
 
   const count = await prisma.lawFirm.count();
-  console.log(`Seeding finished. Created ${count} law firms.`);
+  console.log(`Seed completed. Database has ${count} law firms.`);
 }
 
 main()
