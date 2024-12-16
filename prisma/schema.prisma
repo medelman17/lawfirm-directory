@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LawFirm {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  website   String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Additional fields for future extensibility
+  metadata     Json?     @default("{}")
+  lastScrapedAt DateTime?
+  scrapeStatus String?
+
+  @@index([name])
+  @@index([website])
+  @@index([slug])
+  @@map("law_firms")
+} 

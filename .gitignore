@@ -1,0 +1,72 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+.nyc_output
+
+# next.js
+.next/
+out/
+build
+dist
+
+# misc
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma
+prisma/*.db
+prisma/migrations/
+*.sqlite
+*.sqlite-journal
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+
+# Storybook
+storybook-static
+
+# Cache
+.cache
+.eslintcache
+.stylelintcache
+
+# Docker volumes
+postgres_data/ 
